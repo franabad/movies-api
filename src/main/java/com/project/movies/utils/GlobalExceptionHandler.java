@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(Map.of("message", "Invalid request body"));
     }
 
-    // Maneja errores de formato incorrecto en la fecha en el parametro de la URL
+    // Maneja errores de formato incorrecto en la fecha en el parámetro de la URL
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, String>> handleInvalidDateFormat(MethodArgumentTypeMismatchException ex) {
         if (ex.getValue() instanceof String) {
