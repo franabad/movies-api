@@ -9,6 +9,7 @@ import com.project.movies.utils.Logger;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // TO DO: Implement user registration logic
     public AuthResponse register(UserModel user) {
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
 //
@@ -42,7 +44,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request, HttpServletResponse response) {
         try {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (Exception e) {
             throw new InvalidCredentialsException("Invalid credentials");
         }
@@ -65,7 +67,7 @@ public class AuthService {
             UserModel user = userRepository.findByEmail(email).orElseThrow();
 
             if (!jwtService.isTokenValid(refreshSession, user)) {
-                response.setStatus(401);
+                response.setStatus(UNAUTHORIZED.value());
                 return;
             }
 
@@ -82,7 +84,7 @@ public class AuthService {
 
             setTokenCookies(response, newAccessToken, newRefreshToken, rememberMe);
         } catch (Exception e) {
-            response.setStatus(401);
+            response.setStatus(UNAUTHORIZED.value());
         }
     }
 

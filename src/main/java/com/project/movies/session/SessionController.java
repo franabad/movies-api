@@ -19,40 +19,24 @@ import java.util.Optional;
 public class SessionController {
 
     @Autowired
-    private ISessionRepository sessionRepository;
+    private SessionService sessionService;
 
     // Get all sessions by movie id
     @GetMapping("/movie/{movieId}")
-    public List<SessionModel> getSessionsByMovieId(@PathVariable String movieId) {
-        return sessionRepository.findByMovieId(movieId);
+    public ResponseEntity<List<SessionModel>> getSessionsByMovieId(@PathVariable String movieId) {
+        return sessionService.getAllSessionsByMovieId(movieId);
     }
 
     // Get all sessions by cinema id
     @GetMapping("/cinema/{cinemaId}")
-    public List<SessionModel> getSessionsByCinemaId(@PathVariable Long cinemaId) {
-        return sessionRepository.findByCinemaId(cinemaId);
+    public ResponseEntity<List<SessionModel>> getAllSessionsByCinemaId(@PathVariable Long cinemaId) {
+        return sessionService.getAllSessionsByCinemaId(cinemaId);
     }
 
     //Get all sessions by date
     @GetMapping
-    public ResponseEntity<Object> getSessionsByDate(@RequestParam(required = false) String date) {
-        List<SessionModel> sessions;
-
-        if (date != null) {
-            if (!date.matches("\\d{8}")) {
-                throw new MethodArgumentTypeMismatchException(date, LocalDate.class, null, null, null);
-            }
-                LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE);
-                sessions = sessionRepository.findByDate(parsedDate);
-
-                if (sessions.isEmpty()) {
-                    return ResponseEntity.status(404).body(Map.of("message", "No sessions found for this date"));
-                }
-        } else {
-            sessions = sessionRepository.findAll();
-        }
-
-        return ResponseEntity.status(200).body(new ApiResponse<>(sessions));
+    public ResponseEntity<Object> getAllSessionsByDate(@RequestParam(required = false) String date) {
+        return sessionService.getAllSessionsByDate(date);
     }
 
     /*
@@ -66,41 +50,18 @@ public class SessionController {
     // Create new session (for a movie)
     @PostMapping
     public ResponseEntity<Object> createSession(@Valid @RequestBody SessionModel session) {
-            sessionRepository.save(session);
-            return ResponseEntity.status(201).body(session);
+        return ResponseEntity.status(201).body(sessionService.createSession(session));
     }
 
     // Update session by id
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateSession(@PathVariable Long id, @RequestBody SessionModel session) {
-        Optional<SessionModel> sessionOptional = sessionRepository.findById(id);
-
-        if (sessionOptional.isEmpty()) {
-            return ResponseEntity.status(404).body(Map.of("message", "Session not found"));
-        }
-
-        SessionModel sessionToUpdate = sessionOptional.get();
-//        sessionToUpdate.setMovieId(session.getMovieId());
-//        sessionToUpdate.setCinemaId(session.getCinemaId());
-        sessionToUpdate.setDate(session.getDate());
-        sessionToUpdate.setTime(session.getTime());
-
-        sessionRepository.save(sessionToUpdate);
-
-        return ResponseEntity.status(202).body(new ApiResponse<>(sessionToUpdate));
+        return sessionService.updateSession(id, session);
     }
 
     // Delete session by id
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSession(@PathVariable Long id) {
-        Optional<SessionModel> session = sessionRepository.findById(id);
-
-        if (session.isEmpty()) {
-            return ResponseEntity.status(404).body(Map.of("message", "Session not found"));
-        }
-
-        sessionRepository.deleteById(id);
-
-        return ResponseEntity.status(204).body(null);
+        return sessionService.deleteSession(id);
     }
 }

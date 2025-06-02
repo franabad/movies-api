@@ -1,6 +1,7 @@
 package com.project.movies.price;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,26 +12,26 @@ import java.util.List;
 public class PriceController {
 
     @Autowired
-    private IPriceRepository priceRepository;
+    private PriceService priceService;
 
     @GetMapping
-    public List<PriceModel> getPrices() {
-        return priceRepository.findAll();
+    public ResponseEntity<List<PriceModel>> getAllPrices() {
+        return priceService.getAllPrices();
+    }
+
+    @PostMapping
+    public ResponseEntity<PriceModel> createPrice(@RequestBody PriceModel price) {
+        return priceService.createPrice(price);
     }
 
     @PutMapping
-    public PriceModel updatePrice(@RequestBody PriceModel price) {
-        return priceRepository.save(price);
+    public ResponseEntity<PriceModel> updatePrice(@RequestBody PriceModel price) {
+        return priceService.updatePrice(price);
     }
 
     @DeleteMapping("/{id}")
     public void deletePrice(@PathVariable Long id) {
-        priceRepository.deleteById(id);
-    }
-
-    @PostMapping
-    public PriceModel createPrice(@RequestBody PriceModel price) {
-        return priceRepository.save(price);
+        priceService.deletePriceById(id);
     }
 }
 

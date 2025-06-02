@@ -1,6 +1,7 @@
 package com.project.movies.auth.controller;
 
 import com.project.movies.config.InvalidCredentialsException;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,6 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(401).body(Map.of("message", ex.getMessage()));
+        return ResponseEntity.status(UNAUTHORIZED).body(Map.of("message", ex.getMessage()));
     }
 }
