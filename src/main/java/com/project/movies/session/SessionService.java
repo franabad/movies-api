@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-
+// FIX ME: Change exception message when PathVariable is not int
 // TO DO: Add exceptions
 @Service
 public class SessionService {
@@ -27,13 +27,27 @@ public class SessionService {
     private ISessionRepository sessionRepository;
 
     @Transactional(readOnly = true)
-    public ResponseEntity<List<SessionModel>> getAllSessionsByMovieId(@PathVariable String movieId) {
-        return ResponseEntity.status(OK).body(sessionRepository.findByMovieId(movieId));
+    public ResponseEntity<Object> getAllSessionsByMovieId(@PathVariable String movieId) {
+        List<SessionModel> sessions = sessionRepository.findByMovieId(movieId);
+
+        if (sessions.isEmpty()) {
+            Map<String, String> errorResponse = Map.of("message", "No sessions found for this movie");
+            return ResponseEntity.status(NOT_FOUND).body(errorResponse);
+        }
+
+        return ResponseEntity.status(OK).body(sessions);
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<List<SessionModel>> getAllSessionsByCinemaId(@PathVariable Long cinemaId) {
-        return ResponseEntity.status(OK).body(sessionRepository.findByCinemaId(cinemaId));
+    public ResponseEntity<Object> getAllSessionsByCinemaId(@PathVariable Long cinemaId) {
+        List<SessionModel> sessions = sessionRepository.findByCinemaId(cinemaId);
+
+        if (sessions.isEmpty()) {
+            Map<String, String> errorResponse = Map.of("message", "No sessions found for this cinema");
+            return ResponseEntity.status(NOT_FOUND).body(errorResponse);
+        }
+
+        return ResponseEntity.status(OK).body(sessions);
     }
 
     // FIX ME: Check the response

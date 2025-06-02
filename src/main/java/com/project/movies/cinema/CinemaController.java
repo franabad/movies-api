@@ -22,7 +22,7 @@ public class CinemaController {
     }
 
     @GetMapping("/{id}")
-    public CinemaModel getCinemaById(@PathVariable Long id) {
+    public ResponseEntity<Object> getCinemaById(@PathVariable Long id) {
         return cinemaService.getCinemaById(id);
     }
 

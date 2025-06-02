@@ -23,13 +23,13 @@ public class SessionController {
 
     // Get all sessions by movie id
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<List<SessionModel>> getSessionsByMovieId(@PathVariable String movieId) {
+    public ResponseEntity<Object> getSessionsByMovieId(@PathVariable String movieId) {
         return sessionService.getAllSessionsByMovieId(movieId);
     }
 
     // Get all sessions by cinema id
     @GetMapping("/cinema/{cinemaId}")
-    public ResponseEntity<List<SessionModel>> getAllSessionsByCinemaId(@PathVariable Long cinemaId) {
+    public ResponseEntity<Object> getAllSessionsByCinemaId(@PathVariable Long cinemaId) {
         return sessionService.getAllSessionsByCinemaId(cinemaId);
     }
 

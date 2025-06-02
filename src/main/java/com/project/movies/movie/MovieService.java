@@ -28,7 +28,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public Object getMovieById(@PathVariable String id) {
+    public ResponseEntity<Object> getMovieById(@PathVariable String id) {
         Optional<MovieModel> movie = movieRepository.findById(id);
 
         if (movie.isEmpty()) {

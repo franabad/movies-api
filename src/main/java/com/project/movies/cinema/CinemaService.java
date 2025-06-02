@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// FIX ME: Change exception message when cinema id is not int
 @Service
 public class CinemaService {
 
@@ -24,10 +25,19 @@ public class CinemaService {
     }
 
     @Transactional(readOnly = true)
-    public CinemaModel getCinemaById(@PathVariable Long id) {
-        return cinemaRepository.findById(id).orElse(null);
+    public ResponseEntity<Object> getCinemaById(@PathVariable Long id) {
+        CinemaModel cinema = cinemaRepository.findById(id).orElse(null);
+
+        if (cinema == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Cinema not found");
+            return ResponseEntity.status(NOT_FOUND).body(response);
+        }
+
+        return ResponseEntity.status(OK).body(cinema);
     }
 
+    // TO DO: Implement validation for the cinema before saving it
     @Transactional
     public ResponseEntity<CinemaModel> createCinema(@RequestBody CinemaModel cinema) {
         cinemaRepository.save(cinema);
