@@ -1,7 +1,8 @@
-package com.project.movies.utils;
+package com.project.movies.exceptions;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.project.movies.session.SessionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +14,16 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler({CinemaInvalidNameException.class, CinemaInvalidNameRegexException.class, CinemaInvalidNullException.class})
+    public ResponseEntity<String> handleBadRequest(RuntimeException ex){
+        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
+    }
+
 
     // Maneja validaciones de @NotNull y otras anotaciones de validación
     @ExceptionHandler(MethodArgumentNotValidException.class)
